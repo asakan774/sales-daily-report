@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Environment variables (ห้าม commit เด็ดขาด)
+.env
+.env.local
+.env.production
+
+# Build output
+dist/
+build/
+
+# Supabase CLI
+supabase/.temp/
+supabase/functions/.deploy/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/settings.json
+.idea/
+
+# Test files
+body.json
+supabase.exe
