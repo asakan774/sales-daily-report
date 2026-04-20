@@ -35,13 +35,13 @@ export default function App() {
 
   // Non-form phases
   if (['no-access', 'inactive', 'holiday', 'missed'].includes(phase)) {
-    return <StatusScreen phase={phase} />
+    return <StatusScreen phase={phase} userId={userId} />
   }
 
   // done: show summary with optional edit button (edit enabled before 20:50 ICT = 13:50 UTC)
   if (phase === 'done') {
     const utcMin = new Date().getUTCHours() * 60 + new Date().getUTCMinutes()
-    const canEdit = true
+    const canEdit = utcMin <= 13 * 60 + 50
     return (
       <StatusScreen
         phase="done"

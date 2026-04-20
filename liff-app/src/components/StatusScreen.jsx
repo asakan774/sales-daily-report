@@ -34,6 +34,16 @@ export default function StatusScreen({ phase, onEdit }) {
           <div style={styles.icon}>🚫</div>
           <div style={styles.title}>ไม่มีสิทธิ์เข้าถึงระบบนี้</div>
           <div style={styles.sub}>กรุณาติดต่อผู้ดูแล</div>
+          {userId && (
+            <div style={{
+              marginTop: 16, padding: '8px 12px', background: '#f5f5f5',
+              borderRadius: 8, fontSize: 11, color: '#888',
+              wordBreak: 'break-all', textAlign: 'left',
+            }}>
+              <div style={{ marginBottom: 4, fontWeight: 600 }}>LINE ID (แจ้งผู้ดูแล):</div>
+              {userId}
+            </div>
+          )}
         </div>
       </div>
     )

@@ -137,7 +137,6 @@ export function useReport(userId) {
   }
 
   function getSubmitDisabledReason() {
-    if (import.meta.env.DEV) return null  // ข้ามเวลาตอน dev
     const h = utcHour()
     const m = utcMinute()
     const utcMinutes = h * 60 + m

@@ -495,7 +495,7 @@ serve(async (req) => {
     return new Response('ok', { headers: { 'Access-Control-Allow-Origin': '*' } })
   }
 
-  const projects = ['elysium']
+  const projects = ['elysium', 'wela', 'celine']
 
   // Push all 3 projects concurrently; one failure does NOT block others
   const results = await Promise.allSettled(
