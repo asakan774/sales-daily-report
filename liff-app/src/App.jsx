@@ -41,7 +41,7 @@ export default function App() {
   // done: show summary with optional edit button (edit enabled before 20:50 ICT = 13:50 UTC)
   if (phase === 'done') {
     const utcMin = new Date().getUTCHours() * 60 + new Date().getUTCMinutes()
-    const canEdit = import.meta.env.DEV || utcMin <= 13 * 60 + 50
+    const canEdit = true
     return (
       <StatusScreen
         phase="done"
