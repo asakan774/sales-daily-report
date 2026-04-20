@@ -15,7 +15,7 @@ const styles = {
   sub: { fontSize: 14, color: '#777' },
 }
 
-export default function StatusScreen({ phase, onEdit }) {
+export default function StatusScreen({ phase, onEdit, userId }) {
   if (phase === 'loading') {
     return (
       <div style={styles.container}>
