@@ -26,8 +26,10 @@ export function NumInput({ label, value, onChange }) {
       <input
         type="number"
         min="0"
-        value={value}
-        onChange={e => onChange(e.target.value)}
+        value={value === 0 ? '' : value}
+        placeholder="0"
+        onChange={e => onChange(e.target.value === '' ? 0 : e.target.value)}
+        onFocus={e => e.target.select()}
         style={{
           width: 72, textAlign: 'center', padding: '6px 4px',
           border: '1.5px solid #ddd', borderRadius: 8, fontSize: 15,

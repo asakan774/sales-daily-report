@@ -27,7 +27,7 @@ export default function App() {
   const { userId, loading: liffLoading, error: liffError } = useLiff()
   const {
     phase, values, errors, submitting,
-    handleChange, submitReport, markHoliday,
+    handleChange, submitReport, markHoliday, startEdit,
   } = useReport(userId)
 
   if (liffLoading || phase === 'loading') return <StatusScreen phase="loading" />
@@ -41,11 +41,11 @@ export default function App() {
   // done: show summary with optional edit button (edit enabled before 20:50 ICT = 13:50 UTC)
   if (phase === 'done') {
     const utcMin = new Date().getUTCHours() * 60 + new Date().getUTCMinutes()
-    const canEdit = utcMin <= 13 * 60 + 50
+    const canEdit = import.meta.env.DEV || utcMin <= 13 * 60 + 50
     return (
       <StatusScreen
         phase="done"
-        onEdit={canEdit ? () => window.location.reload() : undefined}
+        onEdit={canEdit ? startEdit : undefined}
       />
     )
   }

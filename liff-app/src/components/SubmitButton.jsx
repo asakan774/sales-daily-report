@@ -22,8 +22,8 @@ export default function SubmitButton({ onSubmit, disabled: externalDisabled, sub
   }, [])
 
   const utcMin = getUtcMinutes()
-  const OPEN_UTC  = 9 * 60        // 09:00 UTC = 16:00 ICT
-  const CLOSE_UTC = 13 * 60 + 50  // 13:50 UTC = 20:50 ICT
+  const OPEN_UTC  = import.meta.env.DEV ? 0 : 9 * 60        // dev: เปิดตลอด
+  const CLOSE_UTC = import.meta.env.DEV ? 23 * 60 + 59 : 13 * 60 + 50  // dev: เปิดตลอด
 
   let timeReason = null
   if (utcMin < OPEN_UTC) {

@@ -137,12 +137,11 @@ export function useReport(userId) {
   }
 
   function getSubmitDisabledReason() {
+    if (import.meta.env.DEV) return null  // ข้ามเวลาตอน dev
     const h = utcHour()
     const m = utcMinute()
     const utcMinutes = h * 60 + m
-    // Before 09:00 UTC (16:00 ICT)
     if (utcMinutes < 9 * 60) return 'เปิดรับรายงาน 16:00 น.'
-    // After 13:50 UTC (20:50 ICT)
     if (utcMinutes > 13 * 60 + 50) return 'หมดเวลารายงานวันนี้'
     return null
   }
@@ -202,6 +201,11 @@ export function useReport(userId) {
     }
   }
 
+  function startEdit() {
+    setPhase('pending')
+    setErrors({})
+  }
+
   return {
     phase,
     values,
@@ -212,6 +216,7 @@ export function useReport(userId) {
     submitReport,
     markHoliday,
     getSubmitDisabledReason,
+    startEdit,
     reload: loadData,
   }
 }
