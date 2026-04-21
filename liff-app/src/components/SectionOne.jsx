@@ -3,12 +3,13 @@ import { NumInput, SectionCard, SectionTitle, ErrorMsg } from './FormParts'
 
 export default function SectionOne({ values, onChange, error }) {
   const fields = [
-    { key: 's1_not_answer',    label: 'ไม่รับสาย' },
-    { key: 's1_not_convenient', label: 'ไม่สะดวก' },
-    { key: 's1_following',     label: 'ติดตาม' },
-    { key: 's1_coupon',        label: 'ส่งคูปอง' },
-    { key: 's1_not_interested', label: 'ไม่สนใจ' },
-    { key: 's1_dead_lead',     label: 'Lead เสีย' },
+    { key: 's1_not_answer',      label: 'ไม่รับสาย' },
+    { key: 's1_not_convenient',  label: 'ไม่สะดวก' },
+    { key: 's1_following',       label: 'ติดตาม' },
+    { key: 's1_coupon',          label: 'ส่งคูปอง' },
+    { key: 's1_not_interested',  label: 'ไม่สนใจ' },
+    { key: 's1_dead_lead',       label: 'Lead เสีย' },
+    { key: 's1_not_registered',  label: 'ไม่ได้ลงทะเบียน' },
   ]
 
   return (

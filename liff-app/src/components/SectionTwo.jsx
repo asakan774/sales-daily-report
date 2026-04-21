@@ -3,13 +3,14 @@ import { NumInput, SectionCard, SectionTitle, ErrorMsg, ReadonlyRow } from './Fo
 
 export default function SectionTwo({ values, onChange, error }) {
   const fields = [
-    { key: 's2_not_answer',    label: 'ไม่รับสาย' },
+    { key: 's2_not_answer',     label: 'ไม่รับสาย' },
     { key: 's2_not_convenient', label: 'ไม่สะดวก' },
-    { key: 's2_following',     label: 'ติดตาม' },
-    { key: 's2_coupon',        label: 'ส่งคูปอง' },
+    { key: 's2_following',      label: 'ติดตาม' },
+    { key: 's2_coupon',         label: 'ส่งคูปอง' },
     { key: 's2_not_interested', label: 'ไม่สนใจ' },
-    { key: 's2_dead_lead',     label: 'Lead เสีย' },
-    { key: 's2_pulled_back',   label: 'โดนเรียกคืนจากส่วนกลาง' },
+    { key: 's2_dead_lead',      label: 'Lead เสีย' },
+    { key: 's2_pulled_back',    label: 'โดนเรียกคืนจากส่วนกลาง' },
+    { key: 's2_not_registered', label: 'ไม่ได้ลงทะเบียน' },
   ]
 
   return (

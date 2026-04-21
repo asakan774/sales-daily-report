@@ -7,9 +7,9 @@ const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 const INITIAL_VALUES = {
   s1_lead_in: 0, s1_not_answer: 0, s1_not_convenient: 0,
-  s1_following: 0, s1_coupon: 0, s1_not_interested: 0, s1_dead_lead: 0,
+  s1_following: 0, s1_coupon: 0, s1_not_interested: 0, s1_dead_lead: 0, s1_not_registered: 0,
   s2_carryover: 0, s2_not_answer: 0, s2_not_convenient: 0,
-  s2_following: 0, s2_coupon: 0, s2_not_interested: 0, s2_dead_lead: 0, s2_pulled_back: 0,
+  s2_following: 0, s2_coupon: 0, s2_not_interested: 0, s2_dead_lead: 0, s2_pulled_back: 0, s2_not_registered: 0,
   s3_chat_in: 0, s3_not_reply: 0, s3_following: 0,
   s3_coupon: 0, s3_dead_chat: 0, s3_not_interested: 0, s3_not_registered: 0,
   s4_carryover: 0, s4_old_chat_back: 0, s4_not_reply: 0,
@@ -113,12 +113,12 @@ export function useReport(userId) {
     const e = {}
 
     const s1Sum = values.s1_not_answer + values.s1_not_convenient + values.s1_following +
-      values.s1_coupon + values.s1_not_interested + values.s1_dead_lead
+      values.s1_coupon + values.s1_not_interested + values.s1_dead_lead + values.s1_not_registered
     if (s1Sum !== values.s1_lead_in)
       e.s1 = `ผลรวม S1 (${s1Sum}) ≠ Lead In (${values.s1_lead_in})`
 
     const s2Sum = values.s2_not_answer + values.s2_not_convenient + values.s2_following +
-      values.s2_coupon + values.s2_not_interested + values.s2_dead_lead + values.s2_pulled_back
+      values.s2_coupon + values.s2_not_interested + values.s2_dead_lead + values.s2_pulled_back + values.s2_not_registered
     if (s2Sum !== values.s2_carryover)
       e.s2 = `ผลรวม S2 (${s2Sum}) ≠ Carryover (${values.s2_carryover})`
 
