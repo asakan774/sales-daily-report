@@ -44,14 +44,16 @@ const fieldGroups = [
 ]
 
 // combined columns for summary table
-function leadIn(r)       { return r.s1_lead_in ?? 0 }
-function leadFollow(r)   { return (r.s1_following ?? 0) + (r.s2_following ?? 0) }
-function leadCoupon(r)   { return (r.s1_coupon ?? 0) + (r.s2_coupon ?? 0) }
-function leadDead(r)     { return (r.s1_not_interested ?? 0) + (r.s1_dead_lead ?? 0) + (r.s1_not_registered ?? 0) + (r.s2_not_interested ?? 0) + (r.s2_dead_lead ?? 0) + (r.s2_not_registered ?? 0) }
-function chatIn(r)       { return r.s3_chat_in ?? 0 }
-function chatFollow(r)   { return (r.s3_following ?? 0) + (r.s4_following ?? 0) }
-function chatCoupon(r)   { return (r.s3_coupon ?? 0) + (r.s4_coupon ?? 0) }
-function chatDead(r)     { return (r.s3_not_interested ?? 0) + (r.s3_dead_chat ?? 0) + (r.s3_not_registered ?? 0) + (r.s4_not_interested ?? 0) + (r.s4_dead_chat ?? 0) }
+function leadIn(r)     { return r.s1_lead_in ?? 0 }
+function leadCarry(r)  { return r.s2_carryover ?? 0 }
+function leadFollow(r) { return (r.s1_not_answer ?? 0) + (r.s1_not_convenient ?? 0) + (r.s1_following ?? 0) + (r.s2_not_answer ?? 0) + (r.s2_not_convenient ?? 0) + (r.s2_following ?? 0) }
+function leadCoupon(r) { return (r.s1_coupon ?? 0) + (r.s2_coupon ?? 0) }
+function leadDead(r)   { return (r.s1_not_interested ?? 0) + (r.s1_dead_lead ?? 0) + (r.s1_not_registered ?? 0) + (r.s2_not_interested ?? 0) + (r.s2_dead_lead ?? 0) + (r.s2_not_registered ?? 0) + (r.s2_pulled_back ?? 0) }
+function chatIn(r)     { return r.s3_chat_in ?? 0 }
+function chatCarry(r)  { return (r.s4_carryover ?? 0) + (r.s4_old_chat_back ?? 0) }
+function chatFollow(r) { return (r.s3_not_reply ?? 0) + (r.s3_following ?? 0) + (r.s4_not_reply ?? 0) + (r.s4_following ?? 0) }
+function chatCoupon(r) { return (r.s3_coupon ?? 0) + (r.s4_coupon ?? 0) }
+function chatDead(r)   { return (r.s3_not_interested ?? 0) + (r.s3_dead_chat ?? 0) + (r.s3_not_registered ?? 0) + (r.s4_not_interested ?? 0) + (r.s4_dead_chat ?? 0) }
 
 function DetailModal({ report, onClose }) {
   if (!report) return null
@@ -100,10 +102,16 @@ export default function DailyView() {
   const [reports, setReports] = useState([])
   const [loading, setLoading] = useState(false)
   const [modal, setModal] = useState(null)
+  const cache = React.useRef({})
 
   useEffect(() => { fetchReports() }, [date, project])
 
   async function fetchReports() {
+    const key = `${project}-${date}`
+    if (cache.current[key]) {
+      setReports(cache.current[key])
+      return
+    }
     setLoading(true)
     const { data } = await supabase
       .from('daily_reports')
@@ -111,7 +119,9 @@ export default function DailyView() {
       .eq('project_id', project)
       .eq('report_date', date)
       .order('created_at')
-    setReports((data ?? []).map(r => ({ ...r, display_name: r.sales.display_name, sales_id: r.sales.id })))
+    const rows = (data ?? []).map(r => ({ ...r, display_name: r.sales.display_name, sales_id: r.sales.id }))
+    cache.current[key] = rows
+    setReports(rows)
     setLoading(false)
   }
 
@@ -164,10 +174,12 @@ export default function DailyView() {
                 <tr style={{ background: '#f9f9f9' }}>
                   <th style={{ ...thStyle, textAlign: 'left' }}>Sales</th>
                   <th style={{ ...thStyle, borderLeft: '2px solid #E8F5E9' }}>Lead In</th>
+                  <th style={{ ...thStyle, color: '#888' }}>+Carry</th>
                   <th style={thStyle}>ติดตาม</th>
                   <th style={thStyle}>คูปอง</th>
                   <th style={{ ...thStyle, color: '#C62828' }}>เสีย</th>
                   <th style={{ ...thStyle, borderLeft: '2px solid #E3F2FD' }}>Chat In</th>
+                  <th style={{ ...thStyle, color: '#888' }}>+Carry</th>
                   <th style={thStyle}>ติดตาม</th>
                   <th style={thStyle}>คูปอง</th>
                   <th style={{ ...thStyle, color: '#C62828' }}>เสีย</th>
@@ -188,10 +200,12 @@ export default function DailyView() {
                     </td>
                     {r.status === 'done' ? <>
                       <td style={{ ...tdStyle, borderLeft: '2px solid #E8F5E9' }}>{leadIn(r)}</td>
+                      <td style={{ ...tdStyle, color: '#aaa' }}>{leadCarry(r)}</td>
                       <td style={tdStyle}>{leadFollow(r)}</td>
                       <td style={tdStyle}>{leadCoupon(r)}</td>
                       <td style={{ ...tdStyle, color: leadDead(r) > 0 ? '#C62828' : undefined }}>{leadDead(r)}</td>
                       <td style={{ ...tdStyle, borderLeft: '2px solid #E3F2FD' }}>{chatIn(r)}</td>
+                      <td style={{ ...tdStyle, color: '#aaa' }}>{chatCarry(r)}</td>
                       <td style={tdStyle}>{chatFollow(r)}</td>
                       <td style={tdStyle}>{chatCoupon(r)}</td>
                       <td style={{ ...tdStyle, color: chatDead(r) > 0 ? '#C62828' : undefined }}>{chatDead(r)}</td>
@@ -199,7 +213,7 @@ export default function DailyView() {
                       <td style={tdStyle}>{r.s5_call_in ?? 0}</td>
                       <td style={tdStyle}>{r.s5_booking ?? 0}</td>
                     </> : (
-                      <td colSpan={11} style={{ ...tdStyle, color: '#aaa', fontStyle: 'italic' }}>
+                      <td colSpan={13} style={{ ...tdStyle, color: '#aaa', fontStyle: 'italic' }}>
                         {r.status === 'holiday' ? '🟡 วันหยุด' : r.status === 'missed' ? '🔴 ลืมรายงาน' : '⏳ ยังไม่ส่ง'}
                       </td>
                     )}
@@ -210,10 +224,12 @@ export default function DailyView() {
                   <tr style={{ background: '#E8F5E9', fontWeight: 700 }}>
                     <td style={{ ...tdName, color: '#1B5E20' }}>รวมทีม</td>
                     <td style={{ ...tdStyle, borderLeft: '2px solid #E8F5E9', fontWeight: 700 }}>{doneReports.reduce((a, r) => a + leadIn(r), 0)}</td>
+                    <td style={{ ...tdStyle, color: '#aaa', fontWeight: 700 }}>{doneReports.reduce((a, r) => a + leadCarry(r), 0)}</td>
                     <td style={{ ...tdStyle, fontWeight: 700 }}>{doneReports.reduce((a, r) => a + leadFollow(r), 0)}</td>
                     <td style={{ ...tdStyle, fontWeight: 700 }}>{doneReports.reduce((a, r) => a + leadCoupon(r), 0)}</td>
                     <td style={{ ...tdStyle, fontWeight: 700, color: '#C62828' }}>{doneReports.reduce((a, r) => a + leadDead(r), 0)}</td>
                     <td style={{ ...tdStyle, borderLeft: '2px solid #E3F2FD', fontWeight: 700 }}>{doneReports.reduce((a, r) => a + chatIn(r), 0)}</td>
+                    <td style={{ ...tdStyle, color: '#aaa', fontWeight: 700 }}>{doneReports.reduce((a, r) => a + chatCarry(r), 0)}</td>
                     <td style={{ ...tdStyle, fontWeight: 700 }}>{doneReports.reduce((a, r) => a + chatFollow(r), 0)}</td>
                     <td style={{ ...tdStyle, fontWeight: 700 }}>{doneReports.reduce((a, r) => a + chatCoupon(r), 0)}</td>
                     <td style={{ ...tdStyle, fontWeight: 700, color: '#C62828' }}>{doneReports.reduce((a, r) => a + chatDead(r), 0)}</td>

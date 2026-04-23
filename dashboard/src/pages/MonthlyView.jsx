@@ -57,10 +57,17 @@ export default function MonthlyView() {
   const [salesList, setSalesList] = useState([])
   const [reports, setReports] = useState([])
   const [loading, setLoading] = useState(false)
+  const cache = React.useRef({})
 
   useEffect(() => { fetchData() }, [ym, project])
 
   async function fetchData() {
+    const key = `${project}-${ym}`
+    if (cache.current[key]) {
+      setSalesList(cache.current[key].sales)
+      setReports(cache.current[key].reports)
+      return
+    }
     setLoading(true)
     const firstDay = `${ym}-01`
     const lastDay  = `${ym}-${String(daysInMonth(ym)).padStart(2, '0')}`
@@ -68,6 +75,7 @@ export default function MonthlyView() {
       supabase.from('sales').select('id, display_name').eq('project_id', project).eq('is_active', true).order('display_name'),
       supabase.from('daily_reports').select('*').eq('project_id', project).gte('report_date', firstDay).lte('report_date', lastDay),
     ])
+    cache.current[key] = { sales: sales ?? [], reports: rpts ?? [] }
     setSalesList(sales ?? [])
     setReports(rpts ?? [])
     setLoading(false)
@@ -112,18 +120,18 @@ export default function MonthlyView() {
 
           {/* MTD — Lead */}
           <StatTable title="📥 Lead (MTD สะสม)" rows={[
-            { label: 'Lead In',  value: sum('s1_lead_in') },
-            { label: 'ติดตาม',   value: sum('s1_following') + sum('s2_following') },
-            { label: 'ส่งคูปอง', value: sum('s1_coupon') + sum('s2_coupon') },
-            { label: 'Lead เสีย', value: sum('s1_dead_lead') + sum('s2_dead_lead'), color: '#C62828' },
+            { label: 'Lead In',   value: sum('s1_lead_in') },
+            { label: 'ติดตาม',    value: sum('s1_not_answer') + sum('s1_not_convenient') + sum('s1_following') + sum('s2_not_answer') + sum('s2_not_convenient') + sum('s2_following') },
+            { label: 'ส่งคูปอง',  value: sum('s1_coupon') + sum('s2_coupon') },
+            { label: 'Lead เสีย', value: sum('s1_not_interested') + sum('s1_dead_lead') + sum('s1_not_registered') + sum('s2_not_interested') + sum('s2_dead_lead') + sum('s2_not_registered') + sum('s2_pulled_back'), color: '#C62828' },
           ]} />
 
           {/* MTD — Chat */}
           <StatTable title="💬 Chat (MTD สะสม)" rows={[
-            { label: 'Chat In',      value: sum('s3_chat_in') },
-            { label: 'ติดตาม Chat',  value: sum('s3_following') + sum('s4_following') },
+            { label: 'Chat In',       value: sum('s3_chat_in') },
+            { label: 'ติดตาม Chat',   value: sum('s3_not_reply') + sum('s3_following') + sum('s4_not_reply') + sum('s4_following') },
             { label: 'ส่งคูปอง Chat', value: sum('s3_coupon') + sum('s4_coupon') },
-            { label: 'Chat เสีย',    value: sum('s3_dead_chat') + sum('s4_dead_chat'), color: '#C62828' },
+            { label: 'Chat เสีย',     value: sum('s3_not_interested') + sum('s3_dead_chat') + sum('s3_not_registered') + sum('s4_not_interested') + sum('s4_dead_chat'), color: '#C62828' },
           ]} />
 
           {/* MTD — Conversion */}
