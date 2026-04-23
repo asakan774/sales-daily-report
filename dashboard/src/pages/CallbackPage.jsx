@@ -39,7 +39,7 @@ export default function CallbackPage() {
       const data = await res.json()
       if (!data.userId) throw new Error(data.error ?? 'ไม่ได้รับ userId')
 
-      // Find project access from sales table
+      // Find all active projects for this user
       const { data: sales } = await supabase
         .from('sales')
         .select('project_id')
@@ -51,10 +51,8 @@ export default function CallbackPage() {
         return
       }
 
-      // Admin takes priority if user has admin row
-      const projectId = sales.find(s => s.project_id === 'admin')?.project_id ?? sales[0].project_id
-
-      setUser({ userId: data.userId, displayName: data.displayName, projectId })
+      const projectIds = sales.map(s => s.project_id)
+      setUser({ userId: data.userId, displayName: data.displayName, projectIds })
       navigate('/', { replace: true })
     } catch (err) {
       setStatus('❌ เกิดข้อผิดพลาด: ' + err.message)

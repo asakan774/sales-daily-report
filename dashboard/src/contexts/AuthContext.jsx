@@ -20,8 +20,10 @@ export function AuthProvider({ children }) {
   }
 
   const isLoggedIn = !!auth
-  const isAdmin = auth?.projectId === 'admin'
-  const allowedProjects = isAdmin ? ALL_PROJECTS : auth?.projectId ? [auth.projectId] : []
+  const isAdmin = auth?.projectIds?.includes('admin') ?? false
+  const allowedProjects = isAdmin
+    ? ALL_PROJECTS
+    : (auth?.projectIds ?? []).filter(p => ALL_PROJECTS.includes(p))
 
   return (
     <AuthContext.Provider value={{ auth, isLoggedIn, isAdmin, allowedProjects, setUser, logout }}>
