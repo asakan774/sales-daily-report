@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { useAdmin } from '../contexts/AdminContext'
+import { useAuth } from '../contexts/AuthContext'
 
 const PROJECTS = ['elysium', 'wela', 'celine']
 const PROJECT_NAMES = { elysium: 'Asakan Elysium', wela: 'Wela', celine: 'Celine' }
@@ -38,7 +38,7 @@ const btnSecondary = {
 }
 
 export default function AdminSales() {
-  const { logout } = useAdmin()
+  const { logout } = useAuth()
   const navigate = useNavigate()
   const [sales, setSales] = useState([])
   const [filterProject, setFilterProject] = useState('all')
