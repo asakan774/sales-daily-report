@@ -409,7 +409,7 @@ async function pushToGroup(project: string): Promise<void> {
   // 5. Build bubbles
   const submitted = reportsWithName.filter(r => r.status === 'done').length
   const holiday   = reportsWithName.filter(r => r.status === 'holiday').length
-  const missed    = reportsWithName.filter(r => r.status === 'missed').length
+  const missed    = reportsWithName.filter(r => r.status === 'missed' || r.status === 'pending').length
 
   const dateLabel = new Date(today + 'T00:00:00+07:00').toLocaleDateString('th-TH', {
     year: 'numeric', month: 'long', day: 'numeric',
