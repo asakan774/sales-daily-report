@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../contexts/AuthContext'
 
-const PROJECTS = ['elysium', 'wela', 'celine']
 const PROJECT_NAMES = { elysium: 'Asakan Elysium', wela: 'Wela', celine: 'Celine' }
 
 function todayDate() {
@@ -97,8 +97,9 @@ const tdStyle = { padding: '6px 8px', fontSize: 13, textAlign: 'center', borderB
 const tdName  = { padding: '6px 8px', fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap', borderBottom: '1px solid #f5f5f5' }
 
 export default function DailyView() {
+  const { allowedProjects } = useAuth()
   const [date, setDate] = useState(todayDate())
-  const [project, setProject] = useState('elysium')
+  const [project, setProject] = useState(() => allowedProjects[0] ?? 'elysium')
   const [reports, setReports] = useState([])
   const [loading, setLoading] = useState(false)
   const [modal, setModal] = useState(null)
@@ -137,7 +138,7 @@ export default function DailyView() {
         <input type="date" value={date} onChange={e => setDate(e.target.value)}
           style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #ddd', fontSize: 14 }} />
         <div style={{ display: 'flex', borderRadius: 8, border: '1px solid #ddd', overflow: 'hidden' }}>
-          {PROJECTS.map(p => (
+          {allowedProjects.map(p => (
             <button key={p} onClick={() => setProject(p)} style={{
               padding: '8px 12px', border: 'none', cursor: 'pointer', fontSize: 13,
               background: project === p ? '#1B5E20' : '#fff',
