@@ -37,6 +37,37 @@ const btnSecondary = {
   fontSize: 14, fontWeight: 600, cursor: 'pointer', marginTop: 6,
 }
 
+function FormContent({ form, setForm, editTarget, saving, onSave, onCancel }) {
+  return (
+    <>
+      <input
+        placeholder="LINE User ID (U...)"
+        value={form.line_id}
+        onChange={e => setForm(f => ({ ...f, line_id: e.target.value }))}
+        disabled={!!editTarget}
+        style={{ ...inputStyle, background: editTarget ? '#f5f5f5' : '#fff' }}
+      />
+      <input
+        placeholder="ชื่อ Sales"
+        value={form.display_name}
+        onChange={e => setForm(f => ({ ...f, display_name: e.target.value }))}
+        style={inputStyle}
+      />
+      <select
+        value={form.project_id}
+        onChange={e => setForm(f => ({ ...f, project_id: e.target.value }))}
+        style={inputStyle}
+      >
+        {PROJECTS.map(p => <option key={p} value={p}>{PROJECT_NAMES[p]}</option>)}
+      </select>
+      <button onClick={onSave} disabled={saving} style={btnPrimary}>
+        {saving ? '⏳ กำลังบันทึก...' : '💾 บันทึก'}
+      </button>
+      <button onClick={onCancel} style={btnSecondary}>ยกเลิก</button>
+    </>
+  )
+}
+
 export default function AdminSales() {
   const { logout } = useAuth()
   const navigate = useNavigate()
@@ -110,37 +141,6 @@ export default function AdminSales() {
     await supabase.from('sales').delete().eq('id', s.id)
     fetchSales()
   }
-
-  const FormContent = () => (
-    <>
-      <input
-        placeholder="LINE User ID (U...)"
-        value={form.line_id}
-        onChange={e => setForm(f => ({ ...f, line_id: e.target.value }))}
-        disabled={!!editTarget}
-        style={{ ...inputStyle, background: editTarget ? '#f5f5f5' : '#fff' }}
-      />
-      <input
-        placeholder="ชื่อ Sales"
-        value={form.display_name}
-        onChange={e => setForm(f => ({ ...f, display_name: e.target.value }))}
-        style={inputStyle}
-      />
-      <select
-        value={form.project_id}
-        onChange={e => setForm(f => ({ ...f, project_id: e.target.value }))}
-        style={inputStyle}
-      >
-        {PROJECTS.map(p => <option key={p} value={p}>{PROJECT_NAMES[p]}</option>)}
-      </select>
-      <button onClick={handleSave} disabled={saving} style={btnPrimary}>
-        {saving ? '⏳ กำลังบันทึก...' : '💾 บันทึก'}
-      </button>
-      <button onClick={() => { setAddModal(false); setEditTarget(null) }} style={btnSecondary}>
-        ยกเลิก
-      </button>
-    </>
-  )
 
   return (
     <div style={{ maxWidth: 720, margin: '0 auto', padding: 16 }}>
@@ -224,12 +224,14 @@ export default function AdminSales() {
 
       {addModal && (
         <Modal title="+ เพิ่ม Sales" onClose={() => setAddModal(false)}>
-          <FormContent />
+          <FormContent form={form} setForm={setForm} editTarget={null} saving={saving}
+            onSave={handleSave} onCancel={() => setAddModal(false)} />
         </Modal>
       )}
       {editTarget && (
         <Modal title="✏️ แก้ไข Sales" onClose={() => setEditTarget(null)}>
-          <FormContent />
+          <FormContent form={form} setForm={setForm} editTarget={editTarget} saving={saving}
+            onSave={handleSave} onCancel={() => setEditTarget(null)} />
         </Modal>
       )}
     </div>
